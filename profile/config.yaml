@@ -1,6 +1,6 @@
 executor: cluster-generic
 jobs: 10
-latency-wait: 10
+latency-wait: 60
 
 cluster-generic-submit-cmd: >-
   ~/pmacs-snakemake-runner/profile/lsf_submit.sh
