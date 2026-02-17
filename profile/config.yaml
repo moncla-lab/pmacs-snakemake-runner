@@ -1,0 +1,23 @@
+executor: cluster-generic
+jobs: 10
+latency-wait: 10
+
+cluster-generic-submit-cmd: >-
+  ~/pmacs-snakemake-runner/profile/lsf_submit.sh
+  -J {rule}_{wildcards}
+  -q normal
+  -n {threads}
+  -M {resources.mem_mb}
+  -R "rusage[mem={resources.mem_mb}]"
+  -R "span[hosts=1]"
+  -R "select[hname!=node170]"
+  -o ~/logs/{rule}_{wildcards}.out
+  -e ~/logs/{rule}_{wildcards}.err
+
+cluster-generic-status-cmd:  ~/pmacs-snakemake-runner/profile/lsf_status.sh {job_id}
+
+cluster-generic-cancel-cmd: bkill {job_id}
+
+default-resources:
+  mem_mb: 1000
+  threads: 1
