@@ -1,6 +1,29 @@
+"""A series of comments that are meant to help people understand how to use and edit this 
+file for their own analyses. 
+executor: 
+jobs: this specifies the number of jobs that will be run concurrently. This does not specify 
+what the jobs are, only how many will be run at the same time. This should be edited based 
+on the number of jobs you would like to run at once, which should depend on your computing 
+infrastructure. 
+latency-wait: this specifies ...
+"""
+
 executor: cluster-generic
 jobs: 10
 latency-wait: 60
+
+
+"""A series of comments that are meant to help people understand how to use and edit this 
+file for their own analyses. 
+executor: 
+-J: this is currently set to the combination of rule + wildcards. This specifies the actual 
+tasks that will be set as jobs. In this case, we are setting every combination of rule + 
+wildcards as an independent job. This does not specify how many will run at once, simply 
+what the jobs themselves are. 
+-q: this is ...
+etc....
+"""
+
 
 cluster-generic-submit-cmd: >-
   ~/pmacs-snakemake-runner/profile/lsf_submit.sh
