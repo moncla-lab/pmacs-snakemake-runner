@@ -1,29 +1,28 @@
-"""A series of comments that are meant to help people understand how to use and edit this 
+"""
+A series of comments that are meant to help people understand how to use and edit this 
 file for their own analyses. 
-executor: 
-jobs: this specifies the number of jobs that will be run concurrently. This does not specify 
-what the jobs are, only how many will be run at the same time. This should be edited based 
-on the number of jobs you would like to run at once, which should depend on your computing 
-infrastructure. 
-latency-wait: this specifies ...
+executor: This line is absolutely necessary and should not be removed or altered. 
+`cluster-generic` is the name if a [particular Snakemake plugin](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/cluster-generic.html), 
+which is a generic cluster executor. Snakemake also has specific slurm and batch 
+cluster executors. However, these did not really work. So we have settled on this one instead, 
+which has better performance. This line specifies to read in this particular executor and 
+use it. This cluster generic executor is useful because it allows you to write your own 
+scripts about how jobs should be started, stopped, and logged. That information is documented 
+here in the `cluster-generic-submit-cmd` block. 
+
+
+-J: when a particular job is running, give it name equal to rule + wildcard, which will be
+displayed in the queue 
+-q: this specifies the particular queue you want to use on pmacs. Here, we use normal queue. 
+If you needed a GPU or higher memory queue, this could change. 
+-R: specifies resources. the `span[hosts=1]` means only request 1 compute node (here a host
+is a compute node). For our lab we will probably never need to change this. 
+
+For Stephen: will clarify -M vs. -R 
+
 """
 
 executor: cluster-generic
-jobs: 10
-latency-wait: 60
-
-
-"""A series of comments that are meant to help people understand how to use and edit this 
-file for their own analyses. 
-executor: 
--J: this is currently set to the combination of rule + wildcards. This specifies the actual 
-tasks that will be set as jobs. In this case, we are setting every combination of rule + 
-wildcards as an independent job. This does not specify how many will run at once, simply 
-what the jobs themselves are. 
--q: this is ...
-etc....
-"""
-
 
 cluster-generic-submit-cmd: >-
   ~/pmacs-snakemake-runner/profile/lsf_submit.sh
@@ -33,7 +32,6 @@ cluster-generic-submit-cmd: >-
   -M {resources.mem_mb}
   -R "rusage[mem={resources.mem_mb}]"
   -R "span[hosts=1]"
-  -R "select[hname!=node170]"
   -o ~/logs/{rule}_{wildcards}.out
   -e ~/logs/{rule}_{wildcards}.err
 
@@ -41,6 +39,29 @@ cluster-generic-status-cmd:  ~/pmacs-snakemake-runner/profile/lsf_status.sh {job
 
 cluster-generic-cancel-cmd: bkill {job_id}
 
+"""This is another necessary feature that you should not alter. This is necessary because 
+pMACs uses a network file system, meaning that files that are created on a compute node 
+will get mirrored onto the head node. This can cause problems if there is a discrepancy 
+between the nodes in terms of which files are created, which can make Snakemake think 
+that a rule isn't complete. For example, a rule ran on a compute node, and another job is
+queued up on another compute node, but does not see the output file. This rule/job could 
+error, when the file has simply been delayed. This latency instructs Snakemake it pause 
+for a maximum of 60 seconds for the file to arrive."""
+
+latency-wait: 60
+
+
+"""Optional specifications that we are not using at this time. 
+
+You can also specify things like default memory or default jobs. Here, we have opted not to 
+do so, since the jobs we run on pmacs are so varied. However, you could specify that you want 
+to run 10 concurrent jobs with default memory of 1000 megabytes and 1 thread as follows: 
+
+jobs: 10
+
 default-resources:
   mem_mb: 1000
   threads: 1
+
+"""
+
