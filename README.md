@@ -1,5 +1,13 @@
 # Snakemake + Conda on PMACS LSF
 
+For Stephen: add in some information here that this is the where you run it type of profile which should enable you to run any snakemake piepline on pmacs.  But that to maximize your use of resources, you should probably combine with a pipeline specific profile, or at least specify the number of jobs somewhere. 
+
+Priorities: command then, then workflow profile, global profile. 
+
+To Stephen: flesh this section on priorities out a little bit with links. 
+
+Finally, to Stephen, outline possible use options, including specifying this profile each time you run something on pmacs vs. setting this in your pmacs environment. 
+
 A working Snakemake profile for running conda-dependent workflows on the PMACS HPC cluster (IBM Spectrum LSF 10.1). Supports both Python (`run:`) and shell (`shell:`) directives with full access to conda-installed tools.
 
 This has a demo pipeline for both of the above, but it also aspires to be a general purpose runner for arbitrary Snakemake+Conda pipelines on PMACs.
