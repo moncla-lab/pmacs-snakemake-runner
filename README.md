@@ -1,16 +1,37 @@
 # Snakemake + Conda on PMACS LSF
 
-For Stephen: add in some information here that this is the where you run it type of profile which should enable you to run any snakemake piepline on pmacs.  But that to maximize your use of resources, you should probably combine with a pipeline specific profile, or at least specify the number of jobs somewhere. 
+A general-purpose [Snakemake global profile](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles) for running conda-dependent workflows on the PMACS HPC cluster (IBM Spectrum LSF 10.1) via the [cluster-generic executor](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/cluster-generic.html). It provides default submission, status, and cancellation commands so you can run **any** Snakemake pipeline on PMACS without editing the pipeline itself. Supports both Python (`run:`) and shell (`shell:`) Snakemake directives with full access to conda-installed tools.
 
-Priorities: command then, then workflow profile, global profile. 
+To maximize resource utilization, combine this profile with a pipeline-specific [workflow profile](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles), or at minimum pass `--jobs N` to control how many LSF jobs Snakemake submits concurrently.
 
-To Stephen: flesh this section on priorities out a little bit with links. 
+### Configuration Priorities
 
-Finally, to Stephen, outline possible use options, including specifying this profile each time you run something on pmacs vs. setting this in your pmacs environment. 
+When a setting is defined in multiple places, higher-priority sources override lower ones:
 
-A working Snakemake profile for running conda-dependent workflows on the PMACS HPC cluster (IBM Spectrum LSF 10.1). Supports both Python (`run:`) and shell (`shell:`) directives with full access to conda-installed tools.
+1. **Command-line arguments** — explicit flags like `--jobs 20` always win.
+2. **Workflow profile** — a `profiles/default/config.yaml` inside the pipeline directory ([docs](https://snakemake.readthedocs.io/en/stable/executing/cli.html#profiles)).
+3. **Global profile** — the profile passed via `--profile` or the `SNAKEMAKE_PROFILE` environment variable (i.e., this repo).
+4. **Snakemake defaults** — built-in fallback values.
 
-This has a demo pipeline for both of the above, but it also aspires to be a general purpose runner for arbitrary Snakemake+Conda pipelines on PMACs.
+### Usage Options
+
+**Option A — Specify the profile each run (recommended)**
+
+```bash
+snakemake --profile ~/pmacs-snakemake-runner/profile
+```
+
+Best when you work across different clusters or need different profiles for different projects.
+
+**Option B — Set as your default profile**
+
+Add this to your `~/.bashrc`:
+
+```bash
+export SNAKEMAKE_PROFILE="~/pmacs-snakemake-runner/profile"
+```
+
+After sourcing, plain `snakemake` will use this profile automatically. Command-line flags and workflow profiles still take precedence.
 
 ## Quick Start
 
@@ -78,7 +99,7 @@ where `$ENVIRONMENT` is the name of the conda environment that runs your Snakema
 conda activate snakemake
 ```
 
-Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X`). The next time you log in or an LSF job starts, this environment will activate automatically.
+Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X`). The next time you log in or an LSF job starts, this environment will activate automatically... check this before running!
 
 ### 2. Run a Workflow
 

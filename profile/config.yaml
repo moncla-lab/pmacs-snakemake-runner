@@ -5,7 +5,7 @@ executor: This line is absolutely necessary and should not be removed or altered
 `cluster-generic` is the name if a [particular Snakemake plugin](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/cluster-generic.html), 
 which is a generic cluster executor. Snakemake also has specific slurm and batch 
 cluster executors. However, these did not really work. So we have settled on this one instead, 
-which has better performance. This line specifies to read in this particular executor and 
+which is easier to customize for your own environments. This line specifies to read in this particular executor and 
 use it. This cluster generic executor is useful because it allows you to write your own 
 scripts about how jobs should be started, stopped, and logged. That information is documented 
 here in the `cluster-generic-submit-cmd` block. 
@@ -18,7 +18,14 @@ If you needed a GPU or higher memory queue, this could change.
 -R: specifies resources. the `span[hosts=1]` means only request 1 compute node (here a host
 is a compute node). For our lab we will probably never need to change this. 
 
-For Stephen: will clarify -M vs. -R 
+-M sets a per-process memory limit for the job. By default this is a soft limit; append !
+(e.g. -M 4096!) to make it a hard limit that kills the job immediately on exceed
+(https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=o-m).
+-R "rusage[mem=...]" tells the scheduler how much memory to reserve when placing the job,
+ensuring the node has enough RAM before the job starts
+(https://www.ibm.com/docs/en/spectrum-lsf/10.1.0?topic=o-r).
+We set both to the same value so the job is scheduled on a capable node AND constrained
+from exceeding that allocation.
 
 """
 
