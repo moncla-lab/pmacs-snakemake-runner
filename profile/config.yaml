@@ -1,14 +1,31 @@
 """
-A series of comments that are meant to help people understand how to use and edit this 
-file for their own analyses. 
-executor: This line is absolutely necessary and should not be removed or altered. 
-`cluster-generic` is the name if a [particular Snakemake plugin](https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/cluster-generic.html), 
-which is a generic cluster executor. Snakemake also has specific slurm and batch 
-cluster executors. However, these did not really work. So we have settled on this one instead, 
-which is easier to customize for your own environments. This line specifies to read in this particular executor and 
-use it. This cluster generic executor is useful because it allows you to write your own 
-scripts about how jobs should be started, stopped, and logged. That information is documented 
-here in the `cluster-generic-submit-cmd` block. 
+This yaml file includes a lot of comments in the hopes that it will help users understand 
+how to use and edit this file for their own analyses. This file was originally generated 
+as a generic pMACs profile that should enable users to run Snakemake pipelines on pMACs, 
+while taking advantage of the computing infrastructure to maximize efficiency. This yaml 
+does not include specifications for particular workflows. For example, a SARS-CoV-2 
+nextstrain build would likely require different specifications than running 1000 replicates
+of a TreeSort pipeline, and those specifications should be declared in a separate profile, or 
+as a command line flag. This profile simply includes information and commands to facilitate
+pMACs specific usage. It is therefore not sufficient for every pipeline, nor will it 
+help for pipelines run anywhere other than pMACs (e.g., Beiting server, AWS, etc..). 
+
+In order to make this file maximally descriptive, we have included below a series of 
+explanations for each line in this file, along with information on whether it is 
+necessary, should ever be changed, and what it is specifying. 
+
+executor: `cluster-generic` is the name if a particular Snakemake plugin 
+(https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/cluster-generic.html), 
+which is a generic cluster executor. Executors provide information on how to process jobs.
+This line specifies to read in this particular executor and use it. This cluster generic 
+executor allows users to write their own scripts designating how jobs should be started, 
+stopped, and logged, making it very flexible. That information is documented here in the 
+`cluster-generic-submit-cmd` block, below. 
+
+Snakemake also has specific slurm and batch cluster executors, but these did not perform 
+well when Stephen tested them out. So we have settled on this one instead. 
+
+This line is absolutely necessary and should not be removed or altered. 
 
 
 -J: when a particular job is running, give it name equal to rule + wildcard, which will be
